@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
+import { FaPencil } from 'react-icons/fa6'
 
 export default function Products() {
   const [allProducts, setAllProducts] = useState([])
@@ -32,7 +33,12 @@ export default function Products() {
         { allProducts.map((product, index) => (
           <tr key={index}>
             <td>{ product.title }</td>
-            <td>button</td>
+            <td>
+              <Link href={'/products/'+product._id}>
+                <FaPencil />
+                Edit
+              </Link>
+            </td>
           </tr>
         )) }
         </tbody>

@@ -39,7 +39,7 @@ export default function NewProduct() {
 }
   return (
    <FormProduct 
-        type='create'
+        type='Create New'
         post={post}
         setPost={setPost}
         submitting={submitting}

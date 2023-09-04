@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 
 import FormProduct from '../../../components/FormProduct'
+import {infoProduct} from '../../../constant/index'
 
 export default function ProductId({ params }) {
   // const params = useParams() 
@@ -11,21 +12,21 @@ export default function ProductId({ params }) {
   const productId = params?.id 
   //console.log('id product:', productId);   
   const [submitting, setSubmitting] = useState(false)
-  const [post, setPost] = useState({
-              title       :'',
-              description :'',
-              price       :'',
-  })    
+  const [post, setPost] = useState(infoProduct)    
 
   useEffect(() => {
       if(productId){
         (async () => {
           const response =  await fetch(`/api/products/${productId}`)
           const data = await response.json()
-          setPost({            
+          setPost({
+            _Id         : data._id,
             title       : data.title,
             description : data.description,                
             price       : data.price,
+            images      : data.images,
+            categories  : data.categories,                
+            properties  : data.properties,
           })
           //console.log('post product:', data); 
         })()    
@@ -42,10 +43,13 @@ export default function ProductId({ params }) {
         try {
             const res = await fetch(`/api/products/${productId}`, {
                 method: 'PATCH',
-                body: JSON.stringify({
+                body: JSON.stringify({                 
                   title       : post.title,
                   description : post.description,                
                   price       : post.price,
+                  images      : post.images,
+                  categories  : post.categories,                
+                  properties  : post.properties,
                 })
             })
             if(res.ok) {

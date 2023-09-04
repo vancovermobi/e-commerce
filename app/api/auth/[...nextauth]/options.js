@@ -21,7 +21,7 @@ export const options = {
           image     : gogProfile.picture,
           role      : gogProfile.role ?? "user",   
         };
-        console.log("GoogleProfile:", gogProfile);
+        //console.log("GoogleProfile:", gogProfile);
       },
       clientId      : process.env.GOOGLE_CLIENT_ID,
       clientSecret  : process.env.GOOGLE_CLIENT_SECRET,
@@ -37,7 +37,7 @@ export const options = {
           image     : gitProfile.avatar_url,
           role      : gitProfile.role ?? "user",  
         };
-        console.log("GithubProfile:", gitProfile);
+        //console.log("GithubProfile:", gitProfile);
       },
       clientId      : process.env.GITHUB_ID,
       clientSecret  : process.env.GITHUB_SECRET,
@@ -91,7 +91,7 @@ export const options = {
       if (session?.user) session.user.role = token.role;
 
       const sessionUser = await User.findOne({
-        email: session.user.email,
+        email: session?.user?.email,
       });
       session.user.id = sessionUser._id.toString();
     //   console.log('toNonAccentVietnamese(session.user.name):', toNonAccentVietnamese(session?.user?.name));
@@ -102,7 +102,7 @@ export const options = {
     // Check user
     async signIn({ account, profile, user, credentials }) {
         //console.log('api/auth/nextauth/options/CallBack/SignIn{Account}}:', account)
-        console.log('api/auth/nextauth/options/CallBack/SignIn{Profile}:', profile)
+        //console.log('api/auth/nextauth/options/CallBack/SignIn{Profile}:', profile)
         //console.log('api/auth/nextauth/options/CallBack/SignIn{User}:', user)
         //console.log('api/auth/nextauth/options/CallBack/SignIn{Credentials}:', credentials)
         try {
@@ -110,7 +110,7 @@ export const options = {
 
             // check if a user already exits
             const userExits = await User.findOne({
-                email: profile.email
+                email: profile?.email
             })
             // if not, create a new user
             if(!userExits) {

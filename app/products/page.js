@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
-import { FaPencil } from 'react-icons/fa6'
+import { FaPencil, FaTrash } from 'react-icons/fa6'
 
 export default function Products() {
   const [allProducts, setAllProducts] = useState([])
@@ -15,6 +15,25 @@ export default function Products() {
       setAllProducts(data)
     })()  
   },[])
+
+  // Delete Product
+  const handleDelete = async (id, title) => {
+    //console.log('id product delete:', id)
+    const hasConfirmed = confirm(`Are you sure you want to delete product "${title}" ?`)
+
+    if(hasConfirmed) {
+      try {
+        await fetch(`/api/products/${id.toString()}`, {
+              method: 'DELETE'
+              })
+        const filteredProducts = allProducts.filter((p) => p._id!==id)
+        setAllProducts(filteredProducts)   
+          
+      } catch (error) {
+          console.log("Error_Delete-Product: ", error);
+      }
+    }
+  }
 
   return (
     <div>
@@ -34,10 +53,17 @@ export default function Products() {
           <tr key={index}>
             <td>{ product.title }</td>
             <td>
-              <Link href={'/products/'+product._id}>
+              <Link href={'/products/'+product._id} className='btn-default'>
                 <FaPencil />
                 Edit
               </Link>
+
+              <button className='btn-red'
+               onClick={() => handleDelete(product._id, product.title)}
+              >
+                <FaTrash />
+                Delete
+              </button>
             </td>
           </tr>
         )) }

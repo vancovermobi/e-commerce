@@ -14,11 +14,10 @@ export const connectToDB = async () => {
             dbName              : 'nextauth_ecommerce',
             useNewUrlParser     : true,
             useUnifiedTopology  : true,
-        })
-
+        }) 
+        
         isConnected = true
-
-        console.log('MongoDB connected');
+        console.log('MongoDB connected');       
 
     } catch (error) {
         console.log('Error_connectMongoDB: ', error );

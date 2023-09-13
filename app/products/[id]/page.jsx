@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 
 import FormProduct from '../../../components/FormProduct'
 import {infoProduct} from '../../../constant/index'
+import Spinner from '../../../components/Spinner'
 
 export default function ProductId({ params }) {
   // const params = useParams() 
@@ -12,6 +13,7 @@ export default function ProductId({ params }) {
   const productId = params?.id 
   //console.log('id product:', productId);   
   const [submitting, setSubmitting] = useState(false)
+  const [isUploading,setIsUploading]  = useState(false);
   const [post, setPost] = useState(infoProduct)    
 
   useEffect(() => {
@@ -25,18 +27,20 @@ export default function ProductId({ params }) {
             description : data.description,                
             price       : data.price,
             images      : data.images,
-            categories  : data.categories,                
+            category    : data.category,                
             properties  : data.properties,
           })
-          //console.log('post product:', data); 
-        })()    
-      }
-       
+          //console.log(`Product-id=${productId}:`, data); 
+          setIsUploading(true)
+        })()            
+      }       
   }, [productId])
     
     const updateProduct = async (e) => {
         e.preventDefault()
         setSubmitting(true)
+        setIsUploading(false)
+        //console.log('update-products:', post)
 
         if(!productId) return alert('Product ID not found')
 
@@ -48,25 +52,35 @@ export default function ProductId({ params }) {
                   description : post.description,                
                   price       : post.price,
                   images      : post.images,
-                  categories  : post.categories,                
+                  category    : post.category,                
                   properties  : post.properties,
                 })
             })
-            if(res.ok) {
-                router.push('/products')
+            if(res.ok) {              
+              router.push('/products')
             }
         } catch (error) {
             console.log("Error_Update-Product: ", error);
         }
-        finally { setSubmitting(false) }
+        finally { 
+          setSubmitting(false) 
+          setIsUploading(true) 
+        }
     }
-  return (
-    <FormProduct 
-        type='Edit'
-        post={post}
-        setPost={setPost}
-        submitting={submitting}
-        handleSubmit={ updateProduct } 
-    />
-  )
+  return (<>
+    { isUploading===false ?
+      (
+      <div className='h-24 flex items-center'>
+        <Spinner />
+      </div>
+    ):(
+      <FormProduct 
+          type='Edit'
+          post={post}
+          setPost={setPost}
+          submitting={submitting}
+          handleSubmit={ updateProduct } 
+      />
+    )}
+  </>)
 }

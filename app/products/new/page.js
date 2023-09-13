@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import FormProduct from "../../../components/FormProduct";
-import FormImages from '../../../components/FormImages'
 import {infoProduct} from '../../../constant/index'
 
 export default function NewProduct() {
@@ -16,7 +15,7 @@ export default function NewProduct() {
   const createNewProduct = async (e) => {
     e.preventDefault()
     setSubmitting(true)
-    //console.log('Product_Post:', post);
+    //console.log('Create New Product:', post);
     try {
         const res = await fetch('/api/products/new', {
             method: 'POST',
@@ -27,7 +26,7 @@ export default function NewProduct() {
                 description : post.description,                
                 price       : post.price,
                 images      : post.images,
-                categories  : post.categories,                
+                category    : post.category,                
                 properties  : post.properties,
             })
         })
@@ -38,15 +37,14 @@ export default function NewProduct() {
         console.log("Error_Create-New Product: ", error);
     }
     finally { setSubmitting(false) }
-}
+    } 
   return (
-//    <FormProduct 
-//         type='Create New'
-//         post={post}
-//         setPost={setPost}
-//         submitting={submitting}
-//         handleSubmit={ createNewProduct } 
-//     />
-    <FormImages />
+   <FormProduct 
+        type='Create New'
+        post={post}
+        setPost={setPost}
+        submitting={submitting}
+        handleSubmit={ createNewProduct } 
+    />    
   );
 }

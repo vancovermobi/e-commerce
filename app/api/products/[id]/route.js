@@ -5,7 +5,7 @@ import { connectToDB } from "../../../../utils/database";
 export const GET = async (req, { params }) => {
     try {
         await connectToDB()
-        const product = await Product.findById(params.id).populate('creator')
+        const product = await Product.findById(params.id).populate(['creator', 'category']).exec()
 
         if(!product) return new Response('Product not found', { status: 404 })
 
@@ -18,7 +18,7 @@ export const GET = async (req, { params }) => {
 
 // PATCH (update)
 export const PATCH = async (req, { params }) => {
-    const { title, description, price } = await req.json()
+    const { title, category, images, description, price } = await req.json()
 
     try {
         await connectToDB()
@@ -26,9 +26,11 @@ export const PATCH = async (req, { params }) => {
         
         if(!existingProduct) return new Response('Product not found', { status: 404 })
 
-        existingProduct.title       = title
-        existingProduct.description = description
-        existingProduct.price       = price
+        existingProduct.title           = title
+        existingProduct.category        = category
+        existingProduct.images          = images
+        existingProduct.description     = description
+        existingProduct.price           = price
 
         await existingProduct.save()
 

@@ -1,8 +1,9 @@
 'use client'
 
-import Link from 'next/link'
 import { useState, useEffect } from 'react'
-import { FaPencil, FaTrash } from 'react-icons/fa6'
+import Link from 'next/link'
+// import { FaPencil, FaTrash } from 'react-icons/fa6'
+import Table from '../../components/Table'
 
 export default function Products() {
   const [allProducts, setAllProducts] = useState([])
@@ -41,7 +42,18 @@ export default function Products() {
         Add new product
       </Link>
 
-      <table className='basic mt-2'>
+      {/* Table */}
+      <Table 
+        type={'products'}
+        title={'title'}
+        dataHead={['Product name']}
+        dataBody={ allProducts }
+        hrefEdit={'products'}
+        handleEdit={()=>{}}
+        handleDelete={(id, title) => handleDelete(id, title)}
+        classname={'basic mt-2'}
+      />
+      {/* <table className='basic mt-2'>
         <thead>
           <tr>
             <td>Product name</td>
@@ -58,7 +70,7 @@ export default function Products() {
                 Edit
               </Link>
 
-              <button className='btn-red'
+              <button className='btn-red ml-2'
                onClick={() => handleDelete(product._id, product.title)}
               >
                 <FaTrash />
@@ -68,7 +80,7 @@ export default function Products() {
           </tr>
         )) }
         </tbody>
-      </table>
+      </table> */}
      
     </div>
   )

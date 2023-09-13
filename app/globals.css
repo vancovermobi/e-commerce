@@ -36,20 +36,23 @@ body {
     display: flex;
 }
 
-input, textarea {
+input, textarea, select {
   @apply border-2 border-gray-300 rounded-md px-1 w-full;
   @apply mb-2
 }
-input:focus, textarea:focus {
+input:focus, textarea:focus, select:hover {
   /* @apply border-blue-900 */
   @apply border-primary
 }
+
 h1 {
   @apply text-blue-900 mb-2 text-xl
 }
+
 label {
   @apply text-blue-900
 }
+/*======Table==== */
 table.basic {
   @apply w-full bg-white rounded-sm shadow-md;
 }
@@ -63,22 +66,50 @@ table.basic tr td {
 table.basic a , table.basic button {
   @apply px-4 py-1 rounded-sm inline-flex items-center gap-1 text-sm;
 }
+/*=====END===== */
+
+/*=====Button======*/
 .btn-primary{
-  @apply bg-primary text-white px-4 py-1 rounded-sm shadow-sm;
+  @apply bg-primary text-white px-4 py-1 rounded-md shadow-sm;
+}
+.btn-primary:hover {
+  @apply bg-indigo-800 ;
 }
 .btn-default, .btn-red{
-  @apply px-4 py-1 rounded-md hover:underline;
+  @apply px-4 py-1 rounded-md;
 }
 .btn-red{
-  @apply bg-red-200 text-red-600 px-4 py-1 rounded-sm shadow-sm;
+  @apply bg-red-200 text-red-500 px-2 py-1 rounded-md shadow-sm;
+}
+.btn-red:hover {
+  @apply  border-red-900 text-red-700 underline;
 }
 .btn-default{
-  @apply bg-white text-gray-800 px-4 py-1 rounded-sm border border-gray-200 shadow-sm;
+  @apply bg-gray-100 text-gray-800 px-4 py-1 rounded-md border border-gray-200 shadow-sm;
 }
+.btn-default:hover {
+  @apply bg-gray-200 text-gray-950 border-gray-400 underline;
+}
+.btn-secondary{
+  @apply bg-gray-400 text-white px-4 py-1 rounded-md border border-gray-200 shadow-sm;
+}
+.btn-secondary:hover {
+  @apply bg-gray-500 border-gray-400 underline;
+}
+/*======END========*/
 
+/*======Images=====*/
+img{
+  max-height: 100%;
+  object-fit: contain;
+    width: 100% ;
+    position: relative ;
+    /* height: unset ; */
+}
 .photo {
   @apply flex flex-wrap gap-1 mb-2 ;
 }
 .uploadimage {
   @apply w-24 h-24 border border-gray-200 text-center flex flex-col items-center justify-center cursor-pointer gap-1 text-sm text-gray-500 rounded-sm bg-white shadow-sm hover:border-primary hover:text-primary ; 
 }
+/*======END=======*/

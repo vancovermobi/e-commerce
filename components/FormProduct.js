@@ -1,182 +1,217 @@
 'use client'
 
-import Image from 'next/image';
 import { useState, useEffect } from 'react'
-import { FaUpload } from 'react-icons/fa6'
-import { ReactSortable } from 'react-sortablejs';
-import axios from 'axios';
+import { useRouter } from 'next/navigation'
+//import Image from 'next/image';
+// import { FaUpload } from 'react-icons/fa6'
+// import { ReactSortable } from 'react-sortablejs';
+// import axios from 'axios';
 import Spinner from './Spinner'
+import FormImages from './FormImages';
 
 
-export default function FormProduct({  type, post, setPost, submitting, handleSubmit }) {
-  const [images,setImages] = useState( post.images || []);
-  const [isUploading,setIsUploading]  = useState(false);
-  const [categories,setCategories]    = useState([]);
+export default function FormProduct({  
+  type, post, setPost, submitting, handleSubmit }) {
+  const router = useRouter()
+  const [isLoading,setIsLoading]  = useState(false);
+  const [categories,setCategories] = useState([]);
 
-  const [uploading, setUploading] = useState(false);
-  const [selectedImage, setSelectedImage] = useState("");
-  const [selectedFile, setSelectedFile] = useState();
+  //====Upload Images Option 2=========
+    //console.log('=====post.images=====',  post.images);
+    //const [images,setImages] = useState(post.images || []);
+    //console.log('images00:', images);
+    //console.log('images.length:', images.length);
+    //const [isUploading,setIsUploading]  = useState(false);  
 
+    // Function Upload Image
+    // const updateImagesOrder = async (img) => {
+    //   setImages(img)
+    //   //setPost({...post, images: images })   
+    //   //console.log("==========img-sortable==========", img); 
+    // }
+    // const uploadImages = async (e) => {
+    //   const files = e.target?.files;
+    //   //console.log("files-images:", files);
 
-  // Upload Image
-  const updateImagesOrder = (images) => {
-    setPost(images)    
-  }
-  const uploadImages = async (e) => { 
-   
-    // console.log('e images', e.target?.files)
-    const files = e.target?.files
-    console.log('files-images:',files[0])
+    //   if (files?.length > 0) {
+    //     setIsUploading(true);
+    //     const formData = new FormData();
 
-    if(files?.length > 0 ) {
-      setIsUploading(true)
-      const formData = new FormData()
-      formData.append('folder', 'liem');
-      const file = formdata.get('file');
-        if (file instanceof Blob) {
-          formData.append('file', file);
-        } else {
-            throw new Error('Invalid file data');
-      }
-      // for (const file of files ){
-      //   formdata.append('file', file)
-      // }
-      // for ( const [key, value] of formdata){
-      //   console.log(`key: ${key}`);
-      //   console.log(`Value: ${JSON.stringify(value)}`);
-      // }
-     
-      console.log('===Formdata====', formData);
+    //     for (const file of files) {
+    //       formData.append("file", file);
+    //     }
+    //     //console.log("===Formdata====", formData);
+    //     try {
+    //       const res = await axios.post("/api/uploadimages", formData, {
+    //         headers: {
+    //           "Content-Type": "multipart/form-data",
+    //         },
+    //       });
+    //       //console.log('res.done:', res.data.done);
 
-      try {
-        // const res = await axios.post('/api/uploadimages', data)
-        const res = await fetch('/api/uploadimages', {
-          method: "POST",
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-          body: formData,
-          redirect: 'follow'
-         });
-        //const res = await fetch('/api/uploadimages');
-        console.log('res-data:', res);
-      } catch (err) {
-        console.log('upload api err:',err);
-      }
-      
-
-      // setImages(oldImages => {
-      //   return [ ...oldImages, res.data.links ]
-      // })
-
-      setIsUploading(false)
-    }
-  }
-
-  const handleUpload = async () => {
-    setUploading(true);
-    try {
-      if (!selectedFile) return;
-      const formData = new FormData();
-      formData.append("myImage", selectedFile);
-
-      console.log('======myImage========:', selectedFile);
-      // const { data } = await axios.post("/api/uploadimages", formData});
-      const { data }= await fetch('/pages/api/uploadimages', {
-        method: "POST",
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-        body: formData,
-       });
-      console.log('==========res-data==========',data);
-    } catch (error) {
-      console.log(error.response?.data);
-    }
-    setUploading(false);
-  };
+    //       if(res.data.done==='ok') {
+    //         // const imagesLinks = await res.data.finalFilePaths
+    //         const imagesLinks = await res.data.links
+          
+    //         setImages(oldImages =>
+    //           ([...oldImages, ...imagesLinks])             
+    //         );
+    //         // console.log("=======images new========", images);
+    //         //setPost({...post, images: images }) 
+    //       }
+    //     } catch (error) {
+    //       console.log(error.response?.data);
+    //     }
+    //     //setPost({...post, images: images }) 
+    //     setIsUploading(false);
+    //   }
+    // };  
+    // useEffect(() => {
+    //   if(!isUploading){
+    //     (async () => {
+    //       //console.log("=======images new========", images);
+    //       setPost({...post, images: images }) 
+    //     })()          
+    //   }     
+    // }, [images])
+  // =====END=============
   
-  return (
-    <section>
-      <h1>{ type } Product</h1>
+  useEffect(() => {   
+    (async() => {
+      setIsLoading(false)
+      const response = await fetch('/api/categories')
+      const data = await response.json()
+      setCategories(data)
+      setIsLoading(true)
+      //console.log('AllCategories:', data);
+    })()      
+   
+    // try {          
+    //   const response = await fetch('/api/categories')
+    //   const data = await response.json()
+    //   setCategories(data)
+    //   //console.log('AllCategories:', data);
+    // } catch (error) {
+    //   console.log('Download all categories error:', error)
+    // }
+  }, [])
+  return (<>
+    { isLoading===false ?
+      (
+      <div className='h-24 flex items-center'>
+        <Spinner />
+      </div>
+      ):(
+      <section>
+        <h1>{ type } Product</h1>
 
-      <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit}>
 
-        {/* Title */}
-        <label htmlFor="title">Product name</label>
-        <input  type="text" name="title" placeholder="product name" 
-                value={ post.title }
-                onChange={(e) => setPost({...post, title: e.target.value })}
-        />
+          {/* Title */}
+          <label htmlFor="title">Product name</label>
+          <input  type="text" name="title" placeholder="product name" 
+                  value={ post.title }
+                  onChange={(e) => setPost({...post, title: e.target.value })}
+          />
 
-        {/* Images */}
-        <label>Photos</label>
-        <div className="photo">
-          <ReactSortable
-            className='flex flex-wrap gap-1'
-            list={ post.images }
-            setList={ updateImagesOrder }
+          {/* Categories */}
+          <label htmlFor="categories">Categories</label>
+          <select type='select' name='categories'
+            value={ post.category?._id }
+            onChange={(e) => setPost({...post, category: e.target.value })}
           >
-            {!!images?.length && images.map(link => (
-              <div key={link} className='uploadimage'>
-                <Image 
-                  src={ link }
-                  width={24}
-                  height={24}
-                  className='rounded-lg'
-                />
+            <option value="" >UnCategories</option>
+            { categories.length>0 
+              && categories.map((category, index) => (
+                <option key={index} value={ category._id } >
+                  { category.name }
+                </option>
+            ))}
+          </select>
+
+          {/* Images */}
+          <FormImages 
+            imagesPost={ post.images } 
+            setImagesPost={ (images) => setPost({...post, images: images }) }          
+          />
+          {/* or Option 2 */}
+          {/* <label>Photos</label>
+          <div className="photo">
+            <ReactSortable
+              className='flex flex-wrap gap-1'
+              list={ images }
+              setList={ updateImagesOrder }
+            >
+              {!!images?.length!==0 ? 
+              (images?.map((link, index) => (
+                <div key={index} className='uploadimage'>
+                  <Image 
+                  src={link.toString()}
+                    width={100}
+                    height={200}
+                    alt=''
+                    className='rounded-lg'
+                  />
+                </div>              
+              )))
+              :(
+                <div className='uploadimage'>
+                  No images
+                </div>
+              )}          
+            </ReactSortable>
+            {isUploading && (
+              <div className='h-24 flex items-center'>
+                <Spinner />
               </div>
-            ))}          
-          </ReactSortable>
-          {isUploading && (
-            <div className='h-24 flex items-center'>
-              <Spinner />
-            </div>
-          )}
-          <label className='uploadimage'>
-            <FaUpload className='w-6 h-6'/>
-            <div>
-              Add image
-            </div>
-            <input 
-              type='file'
-              name='file' 
-              multiple 
-              hidden              
-              onChange={ uploadImages }
-            />
-          </label>
-          <button 
-                onClick={handleUpload}
-                disabled={uploading}
-                style={{ opacity: uploading ? ".5" : "1" }}
-                className="bg-red-600 p-3 w-32 text-center rounded text-white"
-          >
-            {uploading ? "Uploading.." : "Upload"}
+            )}
+            <label className='uploadimage'>
+              <FaUpload className='w-6 h-6'/>
+              <div>
+                Add image
+              </div>
+              <input 
+                type='file'
+                name='file' 
+                multiple 
+                hidden              
+                onChange={ uploadImages }
+              />
+            </label>         
+          </div>        */}
+          
+          {/* Description */}
+          <label htmlFor="description">Description</label>
+          <textarea type="text" name="description" placeholder="description" 
+                  value={ post.description }
+                  onChange={(e) => setPost({...post, description : e.target.value })}
+          />
+          {/* Price */}
+          <label htmlFor="price">Price (in USD)</label>
+          <input  type="number" name="price" placeholder="price" 
+                  value={ post.price }
+                  onChange={(e) => setPost({...post, price: e.target.value })}
+          />
+          {/* Submit */}
+          <button
+              // type='submit'
+              disabled={submitting}
+              className='btn-primary'
+            >
+                { submitting? 'Saving...' : 'Save' }
           </button>
-        </div>       
-        
-        {/* Description */}
-        <label htmlFor="description">Description</label>
-        <textarea type="text" name="description" placeholder="description" 
-                value={ post.description }
-                onChange={(e) => setPost({...post, description : e.target.value })}
-        />
-        {/* Price */}
-        <label htmlFor="price">Price (in USD)</label>
-        <input  type="number" name="price" placeholder="price" 
-                value={ post.price }
-                onChange={(e) => setPost({...post, price: e.target.value })}
-        />
-        {/* Submit */}
-        <button
-            // type='submit'
-            disabled={submitting}
-            className='btn-primary'
+
+          {/* Cancel */}
+          <button
+            type='button'
+            value='Cancel'
+            className='btn-default ml-4'
+            onClick={() => { router.push('/products')}}
           >
-              { submitting? 'Saving...' : 'Save' }
-        </button>
-      </form>
-    </section>
-  );
+            Cancel
+          </button>
+        </form>
+      </section>
+    )}
+  </>);
 }

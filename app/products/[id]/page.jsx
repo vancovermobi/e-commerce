@@ -40,7 +40,7 @@ export default function ProductId({ params }) {
         e.preventDefault()
         setSubmitting(true)
         setIsUploading(false)
-        //console.log('update-products:', post)
+        console.log('update-products:', post)
 
         if(!productId) return alert('Product ID not found')
 

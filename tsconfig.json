@@ -1,10 +1,6 @@
 {
   "compilerOptions": {
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
+    "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": false,
@@ -30,11 +26,9 @@
     "**/*.tsx",
     "app/components/context/AuthProvider.js",
     "app/api/auth/[...nextauth]/route.js",
-    "app/api/auth/[...nextauth]/options.js",
+    "app/api/auth/[...nextauth]/authOptions.js",
     "middleware.js",
     "next-auth.js"
   ],
-  "exclude": [
-    "node_modules"
-  ]
+  "exclude": ["node_modules"]
 }

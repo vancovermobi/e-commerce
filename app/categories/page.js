@@ -278,7 +278,7 @@ function Categories({ swal }) {
         />
         ):(
           <div className='h-24 flex justify-center items-center text-center'>
-            <Spinner />
+            <Spinner width={36}/>
           </div>
         )}
       </>)}

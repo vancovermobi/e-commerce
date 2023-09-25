@@ -2,7 +2,7 @@ import Product from "../../../../models/product";
 import { connectToDB } from "../../../../utils/database";
 
 export const POST = async (req) => {
-    const { userId, title, category, images, description, price } = await req.json()
+    const { userId, title, category, properties, images, description, price } = await req.json()
 
     try {
         await connectToDB()
@@ -10,6 +10,7 @@ export const POST = async (req) => {
             creator: userId,
             title,
             category,
+            properties,
             images,
             description,
             price,

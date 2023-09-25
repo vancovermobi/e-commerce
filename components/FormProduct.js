@@ -10,11 +10,14 @@ import Spinner from './Spinner'
 import FormImages from './FormImages';
 
 
-export default function FormProduct({  
-  type, post, setPost, submitting, handleSubmit }) {
+export default function FormProduct({ type, post, setPost, submitting, handleSubmit }) {
+  console.log('Form Product/post:', post);
   const router = useRouter()
   const [isLoading,setIsLoading]  = useState(false);
+  const [category,setCategory] = useState((post.category?._id ?? post.category )|| '');
   const [categories,setCategories] = useState([]);
+  const [productProperties,setProductProperties] = useState(post.properties || {});
+  const propertiesToFill = [];
 
   //====Upload Images Option 2=========
     //console.log('=====post.images=====',  post.images);
@@ -75,7 +78,27 @@ export default function FormProduct({
     //   }     
     // }, [images])
   // =====END=============
-  
+
+  //=====Properties===============
+  if (categories?.length > 0 && category) {
+    let cateInfo = []       
+    cateInfo = categories.find(({_id}) => _id === category);   
+    //console.log('cateInfo:', cateInfo);
+    
+    cateInfo?.properties?.length > 0 ? propertiesToFill.push(...cateInfo.properties) : null
+
+    cateInfo.parent?.properties?.length > 0 ? propertiesToFill.push(...cateInfo.parent?.properties) : null
+    //console.log('propertiesToFill:', propertiesToFill);
+  }
+  function setProductProp(propName,value) {
+    setProductProperties(prev => {
+      const newProductProps = {...prev};
+      newProductProps[propName] = value;
+      return newProductProps;
+    });
+    console.log('productProperties:', productProperties);    
+  }
+
   useEffect(() => {   
     (async() => {
       setIsLoading(false)
@@ -83,7 +106,7 @@ export default function FormProduct({
       const data = await response.json()
       setCategories(data)
       setIsLoading(true)
-      //console.log('AllCategories:', data);
+      //console.log('FormProducts_AllCategories:', data);
     })()      
    
     // try {          
@@ -95,10 +118,15 @@ export default function FormProduct({
     //   console.log('Download all categories error:', error)
     // }
   }, [])
+
+  function handleOnSubmit() {
+    ///setPost({...post, category: category })
+    setPost({...post, properties: productProperties })
+  }
   return (<>
     { isLoading===false ?
       (
-      <div className='h-24 flex items-center'>
+      <div className='h-24 flex justify-center items-center text-center'>
         <Spinner />
       </div>
       ):(
@@ -117,8 +145,9 @@ export default function FormProduct({
           {/* Categories */}
           <label htmlFor="categories">Categories</label>
           <select type='select' name='categories'
-            value={ post.category?._id }
-            onChange={(e) => setPost({...post, category: e.target.value })}
+            value={ category }
+            onChange={(e) => {setCategory(e.target.value),
+              setPost({...post, category: e.target.value })}}
           >
             <option value="" >UnCategories</option>
             { categories.length>0 
@@ -128,6 +157,40 @@ export default function FormProduct({
                 </option>
             ))}
           </select>
+          {/* Properties */}
+          {/* {categories.length > 0 &&
+           categories.find(({_id}) => _id === category)?.properties?.map(p => (
+              <div key={p.name}>
+                <label>{ p.name[0].toUpperCase() + p.name.substring(1)}</label>
+                <div>
+                  <select value={post.properties?.[`${p.name}`]}
+                      onChange={ev =>
+                        setProductProp(p.name,ev.target.value)                      
+                      }
+                  >
+                    {p.values.map(v => (
+                      <option key={v} value={v}>{v}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            ))
+          } */}
+          {propertiesToFill.length > 0 && propertiesToFill.map(p => (          
+            <div key={p.name} className="pl-4">
+              <label className='text-gray-700'>{p.name[0].toUpperCase()+p.name.substring(1)}</label>
+              <div>                
+                <select type='select' name='properties'
+                  value={productProperties[p.name]}
+                  onChange={ev => setProductProp(p.name,ev.target.value)}                                 
+                >
+                  {p.values.map(v => (
+                    <option key={v} value={v}>{v}</option>
+                  ))}
+                </select>
+              </div>            
+            </div>
+          ))}
 
           {/* Images */}
           <FormImages 
@@ -182,9 +245,10 @@ export default function FormProduct({
           
           {/* Description */}
           <label htmlFor="description">Description</label>
-          <textarea type="text" name="description" placeholder="description" 
-                  value={ post.description }
-                  onChange={(e) => setPost({...post, description : e.target.value })}
+          <textarea type="text" name="description" 
+            placeholder="description" 
+            value={ post.description }
+            onChange={(e) => setPost({...post, description : e.target.value })}
           />
           {/* Price */}
           <label htmlFor="price">Price (in USD)</label>
@@ -197,6 +261,7 @@ export default function FormProduct({
               // type='submit'
               disabled={submitting}
               className='btn-primary'
+              onClick={() => handleOnSubmit()}
             >
                 { submitting? 'Saving...' : 'Save' }
           </button>

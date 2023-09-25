@@ -10,6 +10,7 @@ import * as dateFn from "date-fns";
 import { S3Client, PutObjectCommand  } from '@aws-sdk/client-s3'
 import mine from 'mime-types'
 import sharp from "sharp";
+import { isAdminRequest } from "../auth/[...nextauth]/authOptions";
 // import { v4 as uuid } from "uuid";
 
 export const api = { bodyParser: false }
@@ -95,9 +96,10 @@ async function createFileUpload(file) {
   return { fileName: fileName , fileBuffer: fileBuffer } 
 }
 
-export async function POST(request , res) {  
-
-  const formData = await request.formData();
+export async function POST(req , res) {  
+  await isAdminRequest(request, response)
+  
+  const formData = await req.formData();
   // const files = formData.get("file")
   const files = formData.getAll("file")
   //console.log(`======formData.get"file"======`, formData);

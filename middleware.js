@@ -14,19 +14,18 @@ export default withAuth(
     //console.log("nextauth-token:", request.nextauth.token);
 
     if (
-      request.nextUrl.pathname.startsWith("/extra") &&
+      request.nextUrl.pathname.startsWith("/api/:path*") &&
       request.nextauth.token?.role !== "admin"
     ) {
       return NextResponse.rewrite(new URL("/denied", request.url));
     }
 
-    if (
-      request.nextUrl.pathname.startsWith("/client") &&
-      request.nextauth.token?.role !== "admin" &&
-      request.nextauth.token?.role !== "manager"
-    ) {
-      return NextResponse.rewrite(new URL("/denied", request.url));
-    }
+    // if (
+    //   request.nextUrl.pathname.startsWith("/categories") &&
+    //   request.nextauth.token?.role !== "admin"
+    // ) {
+    //   return NextResponse.rewrite(new URL("/denied", request.url));
+    // }
   },
   {
     callbacks: {
@@ -40,17 +39,46 @@ export default withAuth(
 // Ref: https://nextjs.org/docs/app/building-your-application/routing/middleware#matcher
 // Just only Admin access matcher: extra, dashboard
 // Chỉ có Quản trị Website có quyền truy cập trang quản trị
-export const config = { matcher: ["/server", "/client", "/dashboard"] };
+export const config = { 
+  matcher: [
+    "/products", 
+    "/categories", 
+    "/api/:path*"
+  ] 
+};
 
-// ConsoleLog:
 
-// nextUrl: /extra
+// import { NextRequest, NextResponse,  } from 'next/server'
+// import { getToken } from 'next-auth/jwt';
 
-// nextauth-token: {
-//   name: 'Dave',
-//   sub: '42',
-//   role: 'admin',
-//   iat: 1689480424,
-//   exp: 1692072424,
-//   jti: 'f70a48f6-05b0-4497-b4ad-09a019985560'
+// export default async function middleware(request: NextRequest, response: NextResponse) {
+
+//   const path = request.nextUrl.pathname;  
+//   console.log("path: ", path);
+//   // If it's the root path, just render it
+//   if (path === '/') {
+//     return NextResponse.next();
+//   }
+
+//   const session = await getToken({
+//     req: request,
+//     secret: process.env.NEXTAUTH_SECRET,
+//   });
+//   console.log("getToken_session: ", session);
+//   const isProtected = path.includes('/admin-dashboard') || path.includes('/profile-page');
+
+//   if (!session && isProtected ) {
+//     return NextResponse.redirect(new URL('/', request.url));
+//   } 
+  
+// };
+
+// export const config = { 
+//   matcher: [
+//     "/admin-dashboard", 
+//     "/profile-page",
+//     "/api/:path*"
+//   ] 
 // }
+
+

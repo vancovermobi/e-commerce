@@ -18,7 +18,7 @@ export const GET = async (req, { params }) => {
 
 // PATCH (update)
 export const PATCH = async (req, { params }) => {
-    const { title, category, images, description, price } = await req.json()
+    const { title, category, properties, images, description, price } = await req.json()
 
     try {
         await connectToDB()
@@ -28,6 +28,7 @@ export const PATCH = async (req, { params }) => {
 
         existingProduct.title           = title
         existingProduct.category        = category
+        existingProduct.properties      = properties
         existingProduct.images          = images
         existingProduct.description     = description
         existingProduct.price           = price
@@ -43,7 +44,6 @@ export const PATCH = async (req, { params }) => {
 
 // DELETE (delete)
 export const DELETE = async (req, { params }) => {
-   
     try {
         await connectToDB()
         await Product.findByIdAndRemove(params.id)        

@@ -33,7 +33,7 @@ export default function Table({
                 <td>{ data.parent?.name }</td>
               }
               <td>
-                {type==='category'? (
+                {type==='category' ? (
                 <button
                   onClick={() => handleEdit(data)}
                   className="btn-default mr-1"

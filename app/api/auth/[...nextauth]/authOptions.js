@@ -1,4 +1,4 @@
-import { NextAuthOptions } from "next-auth";
+import { NextAuthauthOptions, getServerSession } from "next-auth";
 import GithubProvider from "next-auth/providers/github";
 import { GithubProfile } from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
@@ -8,7 +8,9 @@ import User from '../../../../models/user'
 import { connectToDB } from '../../../../utils/database'
 import toNonAccentVietnamese from '../../../../components/conVNtoNAC'
 
-export const options = {
+const adminEmails = ['vancovermobi@gmail.com', 'dynamicliem@gmail.com','phamjonth@gmail.com']
+
+export const authOptions = {
   providers: [
     GoogleProvider({
       profile(gogProfile) {
@@ -88,23 +90,33 @@ export const options = {
     // if you want to use the role in client components
     async session({ session, token }) {
 
-      if (session?.user) session.user.role = token.role;
+      if (session?.user) { 
+        session.user.role = token.role;
 
-      const sessionUser = await User.findOne({
-        email: session?.user?.email,
-      });
-      session.user.id = sessionUser._id.toString();
-    //   console.log('toNonAccentVietnamese(session.user.name):', toNonAccentVietnamese(session?.user?.name));
-       session.user.name = toNonAccentVietnamese(session.user.name)
-
-      return session;
+        const sessionUser = await User.findOne({
+          email: session?.user?.email,
+        });
+        //console.log('sessionUser:', sessionUser);
+        session.user.id = sessionUser?._id.toString();
+        //console.log('toNonAccentVietnamese(session.user.name):', toNonAccentVietnamese(session?.user?.name));
+        session.user.name = toNonAccentVietnamese(session.user.name)
+        
+        if(adminEmails.includes(session?.user?.email)) {
+          session.user.role = 'admin'
+          //console.log('session:', session);
+          return session
+        } else {
+          return false
+        } 
+      }     
     },
     // Check user
     async signIn({ account, profile, user, credentials }) {
-        //console.log('api/auth/nextauth/options/CallBack/SignIn{Account}}:', account)
-        //console.log('api/auth/nextauth/options/CallBack/SignIn{Profile}:', profile)
-        //console.log('api/auth/nextauth/options/CallBack/SignIn{User}:', user)
-        //console.log('api/auth/nextauth/options/CallBack/SignIn{Credentials}:', credentials)
+        //console.log('api/auth/nextauth/authOptions/CallBack/SignIn{Account}}:', account)
+        //console.log('api/auth/nextauth/authOptions/CallBack/SignIn{Profile}:', profile)
+        //console.log('api/auth/nextauth/authOptions/CallBack/SignIn{User}:', user)
+        //console.log('api/auth/nextauth/authOptions/CallBack/SignIn{Credentials}:', credentials)
+        if(!profile) return true
         try {
             await connectToDB()
 
@@ -120,17 +132,27 @@ export const options = {
                     // username: (profile.name!='' || profile.name!=null) ? toNonAccentVietnamese(profile.name) : (profile.login!='' || profile.login!=null) ? (profile.login) : 'noname',
                     username: profile.name!==null ? toNonAccentVietnamese(profile.name) : profile.login!==null ? (profile.login) : 'noname',
                     image   : profile.picture ?? profile.avatar_url,
+                    role    : user?.role,
                 })
             }
 
             return true
         } catch (error) {
-            console.log('api/auth/[...nextauth]/options/Error_signIn: ', error);
+            console.log('api/auth/[...nextauth]/authOptions/Error_signIn: ', error);
             return false
         }
     }, 
   },
 };
+
+export async function isAdminRequest(req, res) {
+  const session = await getServerSession(req, res, authOptions)
+
+  if(!adminEmails.includes(session?.user?.email)){
+    throw 'not an admin'
+  }
+}
+
 
 // ====Console Log:----------//
 

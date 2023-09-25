@@ -41,7 +41,6 @@ export const PATCH = async (req, { params }) => {
 
 // DELETE (delete)
 export const DELETE = async (req, { params }) => {
-   
     try {
         await connectToDB()
         await Category.findByIdAndRemove(params.id)        

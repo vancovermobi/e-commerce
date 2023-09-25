@@ -2,8 +2,7 @@ import { NextResponse, NextRequest } from "next/server.js";
 import Category from "../../../models/category.js";
 import { connectToDB } from "../../../utils/database.js";
 
-
-export const GET = async (req) => {
+export const GET = async (req,res) => {
     try {
         await connectToDB()
         // const categories = await Category.find({}).populate('creator').exec()

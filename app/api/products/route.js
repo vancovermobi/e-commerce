@@ -1,7 +1,6 @@
 import Product from "../../../models/product";
 import { connectToDB } from "../../../utils/database";
 
-
 export const GET = async (req) => {
     try {
         await connectToDB()

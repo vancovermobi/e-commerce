@@ -14,6 +14,10 @@ const UserSchema = new Schema({
     },
     image: {
         type: String,
+    },
+    role: {
+        type: String,
+        required: [ true, 'Role is required!'],
     }
 })
 const User = models.User || model('User', UserSchema)

@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 // import { FaPencil, FaTrash } from 'react-icons/fa6'
+import Spinner from '../../components/Spinner'
 import Table from '../../components/Table'
 
 export default function Products() {
@@ -43,16 +44,22 @@ export default function Products() {
       </Link>
 
       {/* Table */}
-      <Table 
-        type={'products'}
-        title={'title'}
-        dataHead={['Product name']}
-        dataBody={ allProducts }
-        hrefEdit={'products'}
-        handleEdit={()=>{}}
-        handleDelete={(id, title) => handleDelete(id, title)}
-        classname={'basic mt-2'}
-      />
+      {allProducts.length > 0 ? (   
+        <Table 
+          type={'products'}
+          title={'title'}
+          dataHead={['Product name']}
+          dataBody={ allProducts }
+          hrefEdit={'products'}
+          handleEdit={()=>{}}
+          handleDelete={(id, title) => handleDelete(id, title)}
+          classname={'basic mt-2'}
+        />
+      ) : (
+        <div className='h-24 flex justify-center items-center text-center'>
+          <Spinner width={36}/>
+        </div>
+      )}
       {/* <table className='basic mt-2'>
         <thead>
           <tr>
